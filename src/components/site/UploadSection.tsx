@@ -109,17 +109,8 @@ export function UploadSection() {
 
           <div className="glass-panel mt-8 rounded-[2rem] p-6">
             <span className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.2em]">
-              <QrCode className="h-4 w-4 text-orange-fruit" /> How it works
+              How it works
             </span>
-            <div className="mt-5 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-              <div className="shadow-juice rounded-2xl bg-white p-3">
-                <QRCodeSVG value={qrUrl} size={132} level="M" fgColor="#1a1205" bgColor="#ffffff" />
-              </div>
-              <p className="text-center text-sm font-semibold text-muted-foreground sm:text-left">
-                Scan to jump straight to the upload form on your phone.
-                <span className="mt-2 block break-all text-xs font-medium">{qrUrl}</span>
-              </p>
-            </div>
             <ol className="mt-5 grid gap-3">
               {steps.map((s, i) => (
                 <li key={s} className="flex items-center gap-3 text-sm font-semibold">
