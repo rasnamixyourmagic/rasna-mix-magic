@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { QRCodeSVG } from "qrcode.react";
 import confetti from "canvas-confetti";
 import { z } from "zod";
-import { CheckCircle2, QrCode, UploadCloud } from "lucide-react";
+import { CheckCircle2, UploadCloud } from "lucide-react";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Please enter your name").max(80),
@@ -15,7 +14,6 @@ const MAX_BYTES = 50 * 1024 * 1024;
 const ACCEPTED = [".mp4", ".mov", ".avi"];
 
 const steps = [
-  "Scan QR code",
   "Open website",
   "Explore flavours",
   "Click Upload",
