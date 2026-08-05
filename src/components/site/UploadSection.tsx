@@ -58,11 +58,11 @@ export function UploadSection() {
 
     const file = data.get("video");
     if (!(file instanceof File) || file.size === 0) {
-      next.video = "Please attach your recipe video";
+      next['video'] = "Please attach your recipe video";
     } else {
       const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
-      if (!ACCEPTED.includes(ext)) next.video = "Only MP4, MOV or AVI files are accepted";
-      else if (file.size > MAX_BYTES) next.video = "Video must be 50 MB or smaller";
+      if (!ACCEPTED.includes(ext)) next['video'] = "Only MP4, MOV or AVI files are accepted";
+      else if (file.size > MAX_BYTES) next['video'] = "Video must be 50 MB or smaller";
     }
 
     setErrors(next);
@@ -144,7 +144,7 @@ export function UploadSection() {
                 <label className="grid gap-2 text-sm font-bold">
                   Name
                   <input name="name" maxLength={80} placeholder="Your name" className={field} />
-                  {errors.name && <span className="text-xs text-destructive">{errors.name}</span>}
+                  {errors['name'] && <span className="text-xs text-destructive">{errors['name']}</span>}
                 </label>
                 <label className="grid gap-2 text-sm font-bold">
                   Email address
@@ -155,8 +155,8 @@ export function UploadSection() {
                     placeholder="you@example.com"
                     className={field}
                   />
-                  {errors.email && (
-                    <span className="text-xs text-destructive">{errors.email}</span>
+                  {errors['email'] && (
+                    <span className="text-xs text-destructive">{errors['email']}</span>
                   )}
                 </label>
               </div>
@@ -169,7 +169,7 @@ export function UploadSection() {
                   placeholder="e.g. Sunset Melon Fizz"
                   className={field}
                 />
-                {errors.title && <span className="text-xs text-destructive">{errors.title}</span>}
+                {errors['title'] && <span className="text-xs text-destructive">{errors['title']}</span>}
               </label>
 
               <label className="grid gap-2 text-sm font-bold">
@@ -181,8 +181,8 @@ export function UploadSection() {
                   placeholder="Ingredients, steps, and what makes it magic..."
                   className={`${field} resize-none`}
                 />
-                {errors.description && (
-                  <span className="text-xs text-destructive">{errors.description}</span>
+                {errors['description'] && (
+                  <span className="text-xs text-destructive">{errors['description']}</span>
                 )}
               </label>
 
@@ -204,7 +204,7 @@ export function UploadSection() {
                     onChange={(e) => setFileName(e.target.files?.[0]?.name ?? "")}
                   />
                 </label>
-                {errors.video && <span className="text-xs text-destructive">{errors.video}</span>}
+                {errors['video'] && <span className="text-xs text-destructive">{errors['video']}</span>}
               </div>
 
               <button
