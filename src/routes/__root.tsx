@@ -82,6 +82,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "Rasna: MixYourMagic" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "Rasna: MixYourMagic" },
+      { name: "twitter:title", content: "Rasna: MixYourMagic" },
+      { property: "og:description", content: "Create • Mix • Share your own Rasna fruit recipes." },
+      { name: "twitter:description", content: "Create • Mix • Share your own Rasna fruit recipes." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ddb66496-6139-4f3e-8741-4ede136d11aa" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ddb66496-6139-4f3e-8741-4ede136d11aa" },
     ],
     links: [
       {
