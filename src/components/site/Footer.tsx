@@ -1,16 +1,6 @@
-import { useEffect, useState } from "react";
-import { QRCodeSVG } from "qrcode.react";
 import { Citrus, Instagram, Mail, Youtube } from "lucide-react";
 
-const SITE_URL = "https://rasna-mix-magic.lovable.app";
-
 export function Footer() {
-  const [qrUrl, setQrUrl] = useState(SITE_URL);
-
-  useEffect(() => {
-    setQrUrl(typeof window !== "undefined" ? window.location.origin : SITE_URL);
-  }, []);
-
   return (
     <footer className="relative overflow-hidden border-t border-border py-14">
       <div
@@ -28,22 +18,11 @@ export function Footer() {
           <p className="mt-3 text-sm font-semibold text-muted-foreground">Create • Mix • Share</p>
         </div>
 
-        <div className="flex flex-col items-start gap-6 lg:items-center lg:flex-row">
-          <div className="glass-panel flex items-center gap-4 rounded-2xl p-4">
-            <div className="shadow-juice rounded-xl bg-white p-2">
-              <QRCodeSVG value={qrUrl} size={88} level="M" fgColor="#1a1205" bgColor="#ffffff" />
-            </div>
-            <div className="text-sm">
-              <p className="font-extrabold">Scan to visit</p>
-              <p className="max-w-[12rem] break-all text-xs font-medium text-muted-foreground">
-                {qrUrl}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/rasna.mixyourmagic?igsh=Ymd2b3NqdnlhOG96"
+              target="_blank"
+              rel="noopener noreferrer"
               className="glass-panel inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold transition-transform hover:scale-105"
             >
               <Instagram className="h-4 w-4" /> Instagram
