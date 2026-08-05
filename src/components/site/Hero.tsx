@@ -28,13 +28,11 @@ export function Hero() {
 
       {floaters.map((f) => (
         <span
-          key={f.emoji}
+          key={f.id}
           aria-hidden
           style={{ animationDelay: f.delay }}
-          className={`animate-float pointer-events-none absolute hidden text-4xl drop-shadow-lg sm:block lg:text-5xl ${f.className}`}
-        >
-          {f.emoji}
-        </span>
+          className={`animate-float pointer-events-none absolute hidden rounded-full opacity-80 shadow-juice ring-4 ring-background/60 sm:block ${f.size} ${f.color} ${f.className}`}
+        />
       ))}
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr]">
