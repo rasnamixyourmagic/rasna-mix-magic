@@ -21,8 +21,6 @@ const steps = [
   "Confetti + success message",
 ];
 
-const FALLBACK_URL = "https://rasna-mix-magic.lovable.app/#upload";
-
 export function UploadSection() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [fileName, setFileName] = useState("");
