@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { QRCodeSVG } from "qrcode.react";
 import confetti from "canvas-confetti";
 import { z } from "zod";
-import { CheckCircle2, QrCode, UploadCloud } from "lucide-react";
+import { CheckCircle2, UploadCloud } from "lucide-react";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Please enter your name").max(80),
@@ -15,7 +14,6 @@ const MAX_BYTES = 50 * 1024 * 1024;
 const ACCEPTED = [".mp4", ".mov", ".avi"];
 
 const steps = [
-  "Scan QR code",
   "Open website",
   "Explore flavours",
   "Click Upload",
@@ -23,17 +21,13 @@ const steps = [
   "Confetti + success message",
 ];
 
-const FALLBACK_URL = "https://rasna-mix-magic.lovable.app/#upload";
-
 export function UploadSection() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [fileName, setFileName] = useState("");
   const [done, setDone] = useState(false);
-  const [qrUrl, setQrUrl] = useState(FALLBACK_URL);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    setQrUrl(`${window.location.origin}/#upload`);
     if (window.location.hash === "#upload") {
       requestAnimationFrame(() =>
         document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" }),
@@ -111,17 +105,8 @@ export function UploadSection() {
 
           <div className="glass-panel mt-8 rounded-[2rem] p-6">
             <span className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.2em]">
-              <QrCode className="h-4 w-4 text-orange-fruit" /> How it works
+              How it works
             </span>
-            <div className="mt-5 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-              <div className="shadow-juice rounded-2xl bg-white p-3">
-                <QRCodeSVG value={qrUrl} size={132} level="M" fgColor="#1a1205" bgColor="#ffffff" />
-              </div>
-              <p className="text-center text-sm font-semibold text-muted-foreground sm:text-left">
-                Scan to jump straight to the upload form on your phone.
-                <span className="mt-2 block break-all text-xs font-medium">{qrUrl}</span>
-              </p>
-            </div>
             <ol className="mt-5 grid gap-3">
               {steps.map((s, i) => (
                 <li key={s} className="flex items-center gap-3 text-sm font-semibold">
