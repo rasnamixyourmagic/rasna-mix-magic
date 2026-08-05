@@ -19,27 +19,26 @@ export function Footer() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-            <a
-              href="https://www.instagram.com/rasna.mixyourmagic?igsh=Ymd2b3NqdnlhOG96"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass-panel inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold transition-transform hover:scale-105"
-            >
-              <Instagram className="h-4 w-4" /> Instagram
-            </a>
-            <a
-              href="https://youtube.com"
-              className="glass-panel inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold transition-transform hover:scale-105"
-            >
-              <Youtube className="h-4 w-4" /> YouTube
-            </a>
-            <a
-              href="mailto:hello@mixyourmagic.com"
-              className="glass-panel inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold transition-transform hover:scale-105"
-            >
-              <Mail className="h-4 w-4" /> Email
-            </a>
-          </div>
+          <a
+            href="https://www.instagram.com/rasna.mixyourmagic?igsh=Ymd2b3NqdnlhOG96"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass-panel inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold transition-transform hover:scale-105"
+          >
+            <Instagram className="h-4 w-4" /> Instagram
+          </a>
+          <a
+            href="https://youtube.com"
+            className="glass-panel inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold transition-transform hover:scale-105"
+          >
+            <Youtube className="h-4 w-4" /> YouTube
+          </a>
+          <a
+            href="mailto:hello@mixyourmagic.com"
+            className="glass-panel inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold transition-transform hover:scale-105"
+          >
+            <Mail className="h-4 w-4" /> Email
+          </a>
         </div>
       </div>
 
