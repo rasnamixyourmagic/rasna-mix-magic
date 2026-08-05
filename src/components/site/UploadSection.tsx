@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 import confetti from "canvas-confetti";
 import { z } from "zod";
 import { CheckCircle2, QrCode, UploadCloud } from "lucide-react";
