@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 import confetti from "canvas-confetti";
 import { z } from "zod";
 import { CheckCircle2, QrCode, UploadCloud } from "lucide-react";
@@ -22,11 +23,24 @@ const steps = [
   "Confetti + success message",
 ];
 
+const FALLBACK_URL = "https://rasna-mix-magic.lovable.app/#upload";
+
 export function UploadSection() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [fileName, setFileName] = useState("");
   const [done, setDone] = useState(false);
+  const [qrUrl, setQrUrl] = useState(FALLBACK_URL);
   const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    setQrUrl(`${window.location.origin}/#upload`);
+    if (window.location.hash === "#upload") {
+      requestAnimationFrame(() =>
+        document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" }),
+      );
+    }
+  }, []);
+
 
   const celebrate = () => {
     const colors = ["#FF8C00", "#FFD700", "#FF4D4D", "#FFA500", "#228B22"];
@@ -99,6 +113,15 @@ export function UploadSection() {
             <span className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.2em]">
               <QrCode className="h-4 w-4 text-orange-fruit" /> How it works
             </span>
+            <div className="mt-5 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+              <div className="shadow-juice rounded-2xl bg-white p-3">
+                <QRCodeSVG value={qrUrl} size={132} level="M" fgColor="#1a1205" bgColor="#ffffff" />
+              </div>
+              <p className="text-center text-sm font-semibold text-muted-foreground sm:text-left">
+                Scan to jump straight to the upload form on your phone.
+                <span className="mt-2 block break-all text-xs font-medium">{qrUrl}</span>
+              </p>
+            </div>
             <ol className="mt-5 grid gap-3">
               {steps.map((s, i) => (
                 <li key={s} className="flex items-center gap-3 text-sm font-semibold">
@@ -110,6 +133,7 @@ export function UploadSection() {
               ))}
             </ol>
           </div>
+
         </div>
 
         <div className="glass-panel shadow-lift relative overflow-hidden rounded-[2.5rem] p-6 sm:p-9">
@@ -126,10 +150,15 @@ export function UploadSection() {
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <a
                   href="#home"
+                  onClick={() => {
+                    setDone(false);
+                    window.history.replaceState(null, "", window.location.pathname);
+                  }}
                   className="bg-sunrise rounded-2xl px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-primary-foreground transition-transform hover:scale-105"
                 >
                   Back to homepage
                 </a>
+
                 <button
                   onClick={() => setDone(false)}
                   className="rounded-2xl border border-border px-6 py-3 text-sm font-extrabold uppercase tracking-wide transition-transform hover:scale-105"
