@@ -19,7 +19,7 @@ const steps = [
   "Explore flavours",
   "Click Upload",
   "Submit recipe",
-  "Celebrate 🎉",
+  "Confetti + success message",
 ];
 
 export function UploadSection() {
