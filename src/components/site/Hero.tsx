@@ -2,11 +2,11 @@ import { Citrus, Sparkles } from "lucide-react";
 import mixlab from "@/assets/mixlab.jpg";
 
 const floaters = [
-  { emoji: "🍊", className: "left-[6%] top-[22%]", delay: "0s" },
-  { emoji: "🍋", className: "left-[16%] bottom-[16%]", delay: "1.2s" },
-  { emoji: "🍉", className: "right-[8%] top-[18%]", delay: "0.6s" },
-  { emoji: "🥭", className: "right-[14%] bottom-[20%]", delay: "1.8s" },
-  { emoji: "🍃", className: "left-[45%] top-[8%]", delay: "2.4s" },
+  { id: "orange", color: "bg-orange-fruit", size: "h-16 w-16", className: "left-[6%] top-[22%]", delay: "0s" },
+  { id: "lemon", color: "bg-lemon", size: "h-12 w-12", className: "left-[16%] bottom-[16%]", delay: "1.2s" },
+  { id: "melon", color: "bg-melon", size: "h-20 w-20", className: "right-[6%] top-[14%]", delay: "0.6s" },
+  { id: "mango", color: "bg-mango", size: "h-14 w-14", className: "right-[14%] bottom-[18%]", delay: "1.8s" },
+  { id: "leaf", color: "bg-leaf", size: "h-10 w-10", className: "left-[45%] top-[6%]", delay: "2.4s" },
 ];
 
 export function Hero() {
