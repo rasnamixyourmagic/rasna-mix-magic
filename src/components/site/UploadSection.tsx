@@ -150,10 +150,15 @@ export function UploadSection() {
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <a
                   href="#home"
+                  onClick={() => {
+                    setDone(false);
+                    window.history.replaceState(null, "", window.location.pathname);
+                  }}
                   className="bg-sunrise rounded-2xl px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-primary-foreground transition-transform hover:scale-105"
                 >
                   Back to homepage
                 </a>
+
                 <button
                   onClick={() => setDone(false)}
                   className="rounded-2xl border border-border px-6 py-3 text-sm font-extrabold uppercase tracking-wide transition-transform hover:scale-105"
