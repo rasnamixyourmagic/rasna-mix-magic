@@ -93,7 +93,9 @@ export function AboutContact() {
                 <Mail className="h-4 w-4" /> hello@mixyourmagic.com
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/rasna.mixyourmagic?igsh=Ymd2b3NqdnlhOG96"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Instagram"
                 className="grid h-14 w-14 place-items-center rounded-2xl border border-border bg-card transition-transform hover:scale-110"
               >
