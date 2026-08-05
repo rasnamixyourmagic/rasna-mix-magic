@@ -27,11 +27,9 @@ export function UploadSection() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [fileName, setFileName] = useState("");
   const [done, setDone] = useState(false);
-  const [qrUrl, setQrUrl] = useState(FALLBACK_URL);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    setQrUrl(`${window.location.origin}/#upload`);
     if (window.location.hash === "#upload") {
       requestAnimationFrame(() =>
         document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" }),
