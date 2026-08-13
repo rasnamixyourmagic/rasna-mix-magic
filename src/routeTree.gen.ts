@@ -10,33 +10,73 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BuyRouteImport } from './routes/buy'
+import { Route as FlavoursRouteImport } from './routes/flavours'
+import { Route as MixlabRouteImport } from './routes/mixlab'
+import { Route as UploadRouteImport } from './routes/upload'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyRoute = BuyRouteImport.update({
+  id: '/buy',
+  path: '/buy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FlavoursRoute = FlavoursRouteImport.update({
+  id: '/flavours',
+  path: '/flavours',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MixlabRoute = MixlabRouteImport.update({
+  id: '/mixlab',
+  path: '/mixlab',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UploadRoute = UploadRouteImport.update({
+  id: '/upload',
+  path: '/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/buy': typeof BuyRoute
+  '/flavours': typeof FlavoursRoute
+  '/mixlab': typeof MixlabRoute
+  '/upload': typeof UploadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/buy': typeof BuyRoute
+  '/flavours': typeof FlavoursRoute
+  '/mixlab': typeof MixlabRoute
+  '/upload': typeof UploadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/buy': typeof BuyRoute
+  '/flavours': typeof FlavoursRoute
+  '/mixlab': typeof MixlabRoute
+  '/upload': typeof UploadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/buy' | '/flavours' | '/mixlab' | '/upload'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/buy' | '/flavours' | '/mixlab' | '/upload'
+  id: '__root__' | '/' | '/buy' | '/flavours' | '/mixlab' | '/upload'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BuyRoute: typeof BuyRoute
+  FlavoursRoute: typeof FlavoursRoute
+  MixlabRoute: typeof MixlabRoute
+  UploadRoute: typeof UploadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,12 +88,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buy': {
+      id: '/buy'
+      path: '/buy'
+      fullPath: '/buy'
+      preLoaderRoute: typeof BuyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flavours': {
+      id: '/flavours'
+      path: '/flavours'
+      fullPath: '/flavours'
+      preLoaderRoute: typeof FlavoursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mixlab': {
+      id: '/mixlab'
+      path: '/mixlab'
+      fullPath: '/mixlab'
+      preLoaderRoute: typeof MixlabRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upload': {
+      id: '/upload'
+      path: '/upload'
+      fullPath: '/upload'
+      preLoaderRoute: typeof UploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BuyRoute: BuyRoute,
+  FlavoursRoute: FlavoursRoute,
+  MixlabRoute: MixlabRoute,
+  UploadRoute: UploadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

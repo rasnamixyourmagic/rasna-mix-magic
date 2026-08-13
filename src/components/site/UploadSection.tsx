@@ -134,7 +134,7 @@ export function UploadSection() {
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <a
-                  href="#home"
+                  href="/"
                   onClick={() => {
                     setDone(false);
                     window.history.replaceState(null, "", window.location.pathname);

@@ -1,5 +1,6 @@
 import { Citrus, Sparkles } from "lucide-react";
-import mixlab from "@/assets/mixlab.jpg";
+import { Link } from "@tanstack/react-router";
+import heroBrand from "@/assets/hero-brand.jpg";
 
 const floaters = [
   { id: "orange", color: "bg-orange-fruit", size: "h-16 w-16", className: "left-[6%] top-[22%]", delay: "0s" },
@@ -11,8 +12,7 @@ const floaters = [
 
 export function Hero() {
   return (
-    <section id="home" className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
-      {/* juice splash blobs */}
+    <section id="home" className="relative overflow-hidden pt-28 pb-16 sm:pt-40 sm:pb-28">
       <div
         aria-hidden
         className="animate-splash pointer-events-none absolute -left-32 top-10 h-[28rem] w-[28rem] rounded-full bg-melon/30 blur-3xl"
@@ -35,9 +35,9 @@ export function Hero() {
         />
       ))}
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1fr]">
         <div className="animate-rise text-center lg:text-left">
-          <span className="glass-panel inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.2em]">
+          <span className="glass-panel inline-flex items-center gap-2 rounded-full px-4 py-2 text-[0.7rem] font-bold uppercase tracking-[0.2em]">
             <Sparkles className="h-3.5 w-3.5 text-orange-fruit" />
             Create • Mix • Share
           </span>
@@ -49,45 +49,46 @@ export function Hero() {
             <span className="font-display text-xl font-extrabold tracking-tight">Rasna</span>
           </div>
 
-          <h1 className="mt-4 font-display text-5xl leading-[0.95] sm:text-6xl lg:text-7xl">
-            <span className="text-juice">RASNA:</span>
+          <h1 className="mt-4 font-display text-[clamp(2.75rem,12vw,4.5rem)] leading-[0.92] lg:text-7xl">
+            <span className="text-juice">RASNA</span>
             <br />
             MIXYOURMAGIC
           </h1>
 
-          <p className="mt-5 text-lg font-semibold text-muted-foreground sm:text-xl">
-            Create • Mix • Share
+          <p className="mt-5 text-lg font-extrabold sm:text-2xl">
+            Mix Your Mood. <span className="text-juice">Make It Yours.</span>
           </p>
           <p className="mx-auto mt-3 max-w-xl text-base text-muted-foreground lg:mx-0">
-            Blend your own fruit magic, film it, and share it with a nation of mixers. The most
-            loved recipes go straight to our community wall.
+            Discover our fruit flavours, blend your own signature drink in the MixLab, and share
+            it with a nation of mixers.
           </p>
 
-          <div className="mt-9 flex flex-wrap justify-center gap-3 lg:justify-start">
-            <a
-              href="#upload"
-              className="bg-sunrise shadow-juice rounded-2xl px-7 py-4 text-sm font-extrabold uppercase tracking-wide text-primary-foreground transition-transform hover:scale-105"
-            >
-              Upload Your Unique Recipe
-            </a>
-            <a
-              href="#flavours"
-              className="glass-panel rounded-2xl px-7 py-4 text-sm font-extrabold uppercase tracking-wide transition-transform hover:scale-105"
+          <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
+            <Link
+              to="/flavours"
+              className="bg-sunrise shadow-juice min-h-12 rounded-2xl px-7 py-4 text-sm font-extrabold uppercase tracking-wide text-primary-foreground transition-transform hover:scale-105"
             >
               Explore Flavours
-            </a>
+            </Link>
+            <Link
+              to="/mixlab"
+              className="glass-panel min-h-12 rounded-2xl px-7 py-4 text-sm font-extrabold uppercase tracking-wide transition-transform hover:scale-105"
+            >
+              Discover MixLab
+            </Link>
           </div>
         </div>
 
         <div className="animate-rise relative [animation-delay:150ms]">
           <div className="bg-tropic absolute inset-6 rounded-[3rem] opacity-30 blur-2xl" />
-          <div className="glass-panel shadow-lift relative overflow-hidden rounded-[3rem] p-6">
+          <div className="glass-panel shadow-lift relative overflow-hidden rounded-[2.5rem] p-4 sm:rounded-[3rem] sm:p-6">
             <img
-              src={mixlab}
-              alt="Rasna MixLab Original layered fruit drink with ice"
+              src={heroBrand}
+              alt="Rasna fruit drink with orange, mango, watermelon and lemon splashing around it"
               width={1024}
-              height={1024}
-              className="animate-float-slow mx-auto w-full max-w-md rounded-[2rem] object-cover"
+              height={1280}
+              fetchPriority="high"
+              className="animate-float-slow mx-auto w-full max-w-md rounded-[2rem] object-contain"
             />
           </div>
         </div>
