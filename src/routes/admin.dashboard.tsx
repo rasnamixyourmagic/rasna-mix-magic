@@ -1,13 +1,14 @@
 import * as React from 'react'
 import { createFileRoute, useNavigate, redirect, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getCookie, setCookie } from 'vinxi/http'
 import { LogOut, LayoutDashboard, Settings, Users, Package } from 'lucide-react'
-import { verifyToken } from '../lib/auth'
-import { connectToDatabase } from '../lib/db'
-import { Product } from '../lib/models'
 
 export const getDashboardDataFn = createServerFn('GET', async () => {
+  const { verifyToken } = await import('../lib/auth')
+  const { connectToDatabase } = await import('../lib/db')
+  const { Product } = await import('../lib/models')
+  const { getCookie } = await import('vinxi/http')
+
   const token = getCookie('admin_token')
   if (!token || !verifyToken(token)) {
     throw redirect({ to: '/admin/login' })
@@ -21,6 +22,7 @@ export const getDashboardDataFn = createServerFn('GET', async () => {
 })
 
 export const logoutFn = createServerFn('POST', async () => {
+  const { setCookie } = await import('vinxi/http')
   setCookie('admin_token', '', { maxAge: 0, path: '/' })
   return { success: true }
 })

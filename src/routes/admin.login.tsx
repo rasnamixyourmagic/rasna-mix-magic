@@ -1,15 +1,16 @@
 import * as React from 'react'
 import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { setCookie } from 'vinxi/http'
 import { useState } from 'react'
-import { signToken } from '../lib/auth'
 
 export const loginFn = createServerFn('POST', async ({ email, password }: { email: string; password: string }) => {
   const adminEmail = process.env.ADMIN_EMAIL
   const adminPassword = process.env.ADMIN_PASSWORD
 
   if (email === adminEmail && password === adminPassword) {
+    const { signToken } = await import('../lib/auth')
+    const { setCookie } = await import('vinxi/http')
+    
     const token = signToken({ role: 'admin', email })
     setCookie('admin_token', token, {
       httpOnly: true,
