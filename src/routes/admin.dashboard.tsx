@@ -1,45 +1,26 @@
 import * as React from 'react'
-import { createFileRoute, useNavigate, redirect, useRouter } from '@tanstack/react-router'
-import { createServerFn } from '@tanstack/react-start'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import { LogOut, LayoutDashboard, Settings, Users, Package } from 'lucide-react'
 
-export const getDashboardDataFn = createServerFn('GET', async () => {
-  const { verifyToken } = await import('../lib/auth')
-  const { connectToDatabase } = await import('../lib/db')
-  const { Product } = await import('../lib/models')
-  const { getCookie } = await import('vinxi/http')
-
-  const token = getCookie('admin_token')
-  if (!token || !verifyToken(token)) {
-    throw redirect({ to: '/admin/login' })
-  }
-
-  await connectToDatabase()
-  const products = await Product.find({}).sort({ createdAt: -1 }).lean()
-  
-  // Transform to plain objects for hydration
-  return JSON.parse(JSON.stringify(products))
-})
-
-export const logoutFn = createServerFn('POST', async () => {
-  const { setCookie } = await import('vinxi/http')
-  setCookie('admin_token', '', { maxAge: 0, path: '/' })
-  return { success: true }
-})
-
 export const Route = createFileRoute('/admin/dashboard')({
-  loader: () => getDashboardDataFn(),
   component: AdminDashboard,
 })
 
 function AdminDashboard() {
-  const products = Route.useLoaderData()
   const navigate = useNavigate()
-  const router = useRouter()
+  const [recipes, setRecipes] = useState<any[]>([])
 
-  const handleLogout = async () => {
-    await logoutFn()
-    await router.invalidate()
+  // Client-side auth guard
+  useEffect(() => {
+    const isAuth = localStorage.getItem('admin_auth')
+    if (!isAuth) {
+      navigate({ to: '/admin/login' })
+    }
+  }, [navigate])
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_auth')
     navigate({ to: '/admin/login' })
   }
 
@@ -50,7 +31,7 @@ function AdminDashboard() {
         <div className="p-6 border-b border-border">
           <h2 className="text-2xl font-display font-bold text-juice">Rasna Admin</h2>
         </div>
-        
+
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" active />
           <NavItem icon={<Package size={20} />} label="Products/Recipes" />
@@ -59,7 +40,7 @@ function AdminDashboard() {
         </nav>
 
         <div className="p-4 border-t border-border mt-auto">
-          <button 
+          <button
             onClick={handleLogout}
             className="flex items-center space-x-3 w-full px-4 py-3 text-destructive hover:bg-destructive/10 rounded-xl transition-colors font-medium"
           >
@@ -72,7 +53,7 @@ function AdminDashboard() {
       {/* Main Content */}
       <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full max-w-[100vw]">
         <div className="max-w-6xl mx-auto space-y-8 animate-rise">
-          
+
           <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-display font-extrabold text-foreground">Overview</h1>
@@ -82,10 +63,10 @@ function AdminDashboard() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard title="Total Recipes" value={products.length.toString()} trend="All time" />
+            <StatCard title="Total Recipes" value={recipes.length.toString()} trend="All time" />
             <StatCard title="Active Users" value="--" trend="Coming soon" />
-            <StatCard title="New Uploads" value={products.filter((p: any) => p.status === 'Pending').length.toString()} trend="Pending Review" alert />
-            <StatCard title="Approved" value={products.filter((p: any) => p.status === 'Active').length.toString()} trend="Active recipes" />
+            <StatCard title="New Uploads" value={recipes.filter((r) => r.status === 'Pending').length.toString()} trend="Pending Review" alert />
+            <StatCard title="Approved" value={recipes.filter((r) => r.status === 'Active').length.toString()} trend="Active recipes" />
           </div>
 
           {/* Products Table */}
@@ -96,7 +77,7 @@ function AdminDashboard() {
                 View All
               </button>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -109,26 +90,29 @@ function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {products.length === 0 ? (
+                  {recipes.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="p-8 text-center text-muted-foreground">
-                        No recipes uploaded yet.
+                      <td colSpan={5} className="p-12 text-center text-muted-foreground">
+                        <div className="flex flex-col items-center gap-3">
+                          <Package size={40} className="opacity-30" />
+                          <span>No recipes uploaded yet. They'll appear here when users start uploading!</span>
+                        </div>
                       </td>
                     </tr>
                   ) : (
-                    products.map((product: any) => (
-                      <tr key={product._id} className="hover:bg-muted/20 transition-colors">
-                        <td className="p-4 font-medium text-foreground">{product.name}</td>
-                        <td className="p-4 text-sm text-muted-foreground">{product.category}</td>
-                        <td className="p-4 text-sm text-muted-foreground">{product.uploader}</td>
-                        <td className="p-4 text-sm text-muted-foreground">{new Date(product.createdAt).toLocaleDateString()}</td>
+                    recipes.map((recipe: any) => (
+                      <tr key={recipe._id} className="hover:bg-muted/20 transition-colors">
+                        <td className="p-4 font-medium text-foreground">{recipe.name}</td>
+                        <td className="p-4 text-sm text-muted-foreground">{recipe.category}</td>
+                        <td className="p-4 text-sm text-muted-foreground">{recipe.uploader}</td>
+                        <td className="p-4 text-sm text-muted-foreground">{new Date(recipe.createdAt).toLocaleDateString()}</td>
                         <td className="p-4">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            product.status === 'Active' 
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
+                            recipe.status === 'Active'
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                               : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
                           }`}>
-                            {product.status}
+                            {recipe.status}
                           </span>
                         </td>
                       </tr>
@@ -147,11 +131,11 @@ function AdminDashboard() {
 
 function NavItem({ icon, label, active = false }: { icon: React.ReactNode; label: string; active?: boolean }) {
   return (
-    <a 
-      href="#" 
+    <a
+      href="#"
       className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${
-        active 
-          ? 'bg-primary text-primary-foreground shadow-sm' 
+        active
+          ? 'bg-primary text-primary-foreground shadow-sm'
           : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
       }`}
     >
