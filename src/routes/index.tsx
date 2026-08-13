@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Hero } from "@/components/site/Hero";
 import { Community } from "@/components/site/Community";
 import { AboutContact } from "@/components/site/AboutContact";
@@ -41,6 +41,11 @@ function Index() {
       <Hero />
       <Community />
       <AboutContact />
+      <div className="text-center py-8">
+        <Link to="/admin/login" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+          Admin Access
+        </Link>
+      </div>
     </div>
   );
 }
