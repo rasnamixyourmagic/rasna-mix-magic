@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import mixlab from "@/assets/mixlab.jpg";
 import watermelon from "@/assets/watermelon.jpg";
 import orange from "@/assets/orange.jpg";
@@ -100,12 +101,12 @@ function Card({ product }: { product: Product }) {
         </p>
 
         <div className="mt-auto pt-6">
-          <a
-            href="#upload"
+          <Link
+            to="/upload"
             className="glass-panel inline-flex rounded-2xl px-5 py-3 text-xs font-extrabold uppercase tracking-wide transition-transform group-hover:scale-105"
           >
             Learn More
-          </a>
+          </Link>
         </div>
       </div>
     </article>

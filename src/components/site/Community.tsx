@@ -32,7 +32,7 @@ export function Community() {
             </p>
           </div>
           <a
-            href="#upload"
+            href="/upload"
             className="bg-sunrise shadow-juice w-fit rounded-2xl px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-primary-foreground transition-transform hover:scale-105"
           >
             Join them
