@@ -14,6 +14,8 @@ import { Route as BuyRouteImport } from './routes/buy'
 import { Route as FlavoursRouteImport } from './routes/flavours'
 import { Route as MixlabRouteImport } from './routes/mixlab'
 import { Route as UploadRouteImport } from './routes/upload'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +42,16 @@ const UploadRoute = UploadRouteImport.update({
   path: '/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/admin/dashboard',
+  path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +59,8 @@ export interface FileRoutesByFullPath {
   '/flavours': typeof FlavoursRoute
   '/mixlab': typeof MixlabRoute
   '/upload': typeof UploadRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +68,8 @@ export interface FileRoutesByTo {
   '/flavours': typeof FlavoursRoute
   '/mixlab': typeof MixlabRoute
   '/upload': typeof UploadRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +78,15 @@ export interface FileRoutesById {
   '/flavours': typeof FlavoursRoute
   '/mixlab': typeof MixlabRoute
   '/upload': typeof UploadRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/buy' | '/flavours' | '/mixlab' | '/upload'
+  fullPaths: '/' | '/buy' | '/flavours' | '/mixlab' | '/upload' | '/admin/dashboard' | '/admin/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/buy' | '/flavours' | '/mixlab' | '/upload'
-  id: '__root__' | '/' | '/buy' | '/flavours' | '/mixlab' | '/upload'
+  to: '/' | '/buy' | '/flavours' | '/mixlab' | '/upload' | '/admin/dashboard' | '/admin/login'
+  id: '__root__' | '/' | '/buy' | '/flavours' | '/mixlab' | '/upload' | '/admin/dashboard' | '/admin/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +95,8 @@ export interface RootRouteChildren {
   FlavoursRoute: typeof FlavoursRoute
   MixlabRoute: typeof MixlabRoute
   UploadRoute: typeof UploadRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminLoginRoute: typeof AdminLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +136,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/admin/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +159,8 @@ const rootRouteChildren: RootRouteChildren = {
   FlavoursRoute: FlavoursRoute,
   MixlabRoute: MixlabRoute,
   UploadRoute: UploadRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminLoginRoute: AdminLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
