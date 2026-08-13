@@ -1,15 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Navbar } from "@/components/site/Navbar";
 import { Hero } from "@/components/site/Hero";
-import { Flavours } from "@/components/site/Flavours";
-import { UploadSection } from "@/components/site/UploadSection";
 import { Community } from "@/components/site/Community";
 import { AboutContact } from "@/components/site/AboutContact";
-import { Footer } from "@/components/site/Footer";
 
-const title = "Rasna: MixYourMagic — Create, Mix & Share Fruit Recipes";
+const title = "Rasna: MixYourMagic — Mix Your Mood. Make It Yours.";
 const description =
-  "Explore Rasna's fruit flavours, mix your own signature drink, upload your recipe video and join a national community of mixers.";
+  "Discover Rasna's summer and winter fruit flavours, create your own drink in the MixLab, upload your recipe video and join a nation of mixers.";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -31,7 +27,7 @@ export const Route = createFileRoute("/")({
           "@context": "https://schema.org",
           "@type": "Organization",
           name: "Rasna: MixYourMagic",
-          slogan: "Create • Mix • Share",
+          slogan: "Mix Your Mood. Make It Yours.",
           url: "/",
         }),
       },
@@ -41,16 +37,10 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="min-h-screen overflow-x-hidden">
-      <Navbar />
-      <main>
-        <Hero />
-        <Flavours />
-        <UploadSection />
-        <Community />
-        <AboutContact />
-      </main>
-      <Footer />
+    <div className="overflow-x-hidden">
+      <Hero />
+      <Community />
+      <AboutContact />
     </div>
   );
 }
