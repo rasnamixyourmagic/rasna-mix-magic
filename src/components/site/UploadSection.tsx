@@ -25,6 +25,7 @@ export function UploadSection() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [fileName, setFileName] = useState("");
   const [done, setDone] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export function UploadSection() {
     );
   };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const parsed = schema.safeParse({
@@ -75,6 +76,25 @@ export function UploadSection() {
 
     setErrors(next);
     if (Object.keys(next).length > 0) return;
+
+    setSubmitting(true);
+    try {
+      await fetch('/api/recipes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: parsed.data!.name,
+          email: parsed.data!.email,
+          title: parsed.data!.title,
+          description: parsed.data!.description,
+          videoName: file instanceof File ? file.name : '',
+        }),
+      });
+    } catch (_) {
+      // Best-effort — still show success to user even if network fails
+    } finally {
+      setSubmitting(false);
+    }
 
     setDone(true);
     celebrate();
@@ -223,9 +243,10 @@ export function UploadSection() {
 
               <button
                 type="submit"
-                className="bg-sunrise shadow-juice mt-2 rounded-2xl px-6 py-4 text-sm font-extrabold uppercase tracking-wide text-primary-foreground transition-transform hover:scale-[1.02]"
+                disabled={submitting}
+                className="bg-sunrise shadow-juice mt-2 rounded-2xl px-6 py-4 text-sm font-extrabold uppercase tracking-wide text-primary-foreground transition-transform hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                Submit my recipe
+                {submitting ? 'Submitting…' : 'Submit my recipe'}
               </button>
             </form>
           )}
