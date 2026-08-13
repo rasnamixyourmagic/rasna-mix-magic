@@ -139,12 +139,12 @@ function FlavoursPage() {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
           <div className="max-w-2xl text-center sm:ml-auto sm:text-right">
             <span className="glass-panel inline-flex items-center gap-2 rounded-full px-4 py-2 text-[0.7rem] font-extrabold uppercase tracking-[0.2em]">
-              ❄️ Winter Flavours
+              ❄️ Winter Breeze
             </span>
             <h2 className="mt-5 font-display text-[clamp(2.5rem,11vw,4rem)] leading-[0.95]">
               WINTER
               <br />
-              <span className="text-juice">FLAVOURS</span>
+              <span className="text-juice">BREEZE</span>
             </h2>
             <p className="mt-4 text-lg font-extrabold">Rich. Fruity. Full of flavour.</p>
             <p className="mt-3 text-muted-foreground">
