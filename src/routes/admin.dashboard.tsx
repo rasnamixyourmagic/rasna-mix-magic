@@ -1280,7 +1280,7 @@ function AdminDashboard() {
                       {/* Actual video element */}
                       <video
                         ref={videoRef}
-                        src={selectedRecipe.videoName && selectedRecipe.videoName.startsWith('http') ? selectedRecipe.videoName : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"}
+                        src={selectedRecipe.videoName && selectedRecipe.videoName.startsWith('http') ? selectedRecipe.videoName : "https://res.cloudinary.com/demo/video/upload/cld-sample-video.mp4"}
                         className="absolute inset-0 w-full h-full object-cover"
                         playsInline
                         loop
