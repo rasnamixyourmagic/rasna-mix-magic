@@ -22,7 +22,6 @@ import {
   Check, 
   X, 
   Sliders, 
-  FileText, 
   ChevronRight, 
   UserMinus, 
   UserCheck, 
@@ -112,6 +111,17 @@ function AdminDashboard() {
 
   // Simulated video player playing state (for custom media player wow factor)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+  const videoRef = React.useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isVideoPlaying) {
+        videoRef.current.play().catch((err: any) => console.error('Play error:', err))
+      } else {
+        videoRef.current.pause()
+      }
+    }
+  }, [isVideoPlaying, selectedRecipe])
 
   // Auth check & initial fetches
   useEffect(() => {
@@ -162,6 +172,28 @@ function AdminDashboard() {
     }
   }
 
+  const [seeding, setSeeding] = useState(false)
+  const handleSeedData = async () => {
+    setSeeding(true)
+    try {
+      const res = await fetch('/api/recipes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'seed' })
+      })
+      if (res.ok) {
+        toast.success('Successfully seeded database with 5 mock recipes!')
+        fetchRecipes()
+      } else {
+        throw new Error('Seed failed')
+      }
+    } catch {
+      toast.error('Failed to seed sample database data.')
+    } finally {
+      setSeeding(false)
+    }
+  }
+
   const updateSetting = async (key: keyof GlobalSettings, value: any) => {
     try {
       const res = await fetch('/api/settings', {
@@ -170,7 +202,7 @@ function AdminDashboard() {
         body: JSON.stringify({ key, value })
       })
       if (res.ok) {
-        setSettings(prev => ({ ...prev, [key]: value }))
+        setSettings((prev: GlobalSettings) => ({ ...prev, [key]: value }))
         toast.success(`Setting '${key}' updated successfully`)
       } else {
         throw new Error('Failed to update')
@@ -197,7 +229,7 @@ function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to update')
       const updated = await res.json()
       
-      setRecipes(prev => prev.map(r => r._id === recipe._id ? updated : r))
+      setRecipes((prev: Recipe[]) => prev.map((r: Recipe) => r._id === recipe._id ? updated : r))
       
       // Update selected recipe if currently open
       if (selectedRecipe?._id === recipe._id) {
@@ -211,7 +243,7 @@ function AdminDashboard() {
   }
 
   // Save full recipe edits
-  const handleSaveRecipeEdits = async (e: React.FormEvent) => {
+  const handleSaveRecipeEdits = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!selectedRecipe) return
 
@@ -231,7 +263,7 @@ function AdminDashboard() {
       if (!res.ok) throw new Error('Update failed')
       const updated = await res.json()
 
-      setRecipes(prev => prev.map(r => r._id === selectedRecipe._id ? updated : r))
+      setRecipes((prev: Recipe[]) => prev.map((r: Recipe) => r._id === selectedRecipe._id ? updated : r))
       setSelectedRecipe(updated)
       setIsEditingRecipe(false)
       toast.success('Recipe updated successfully')
@@ -250,7 +282,7 @@ function AdminDashboard() {
       })
       if (!res.ok) throw new Error('Delete failed')
       
-      setRecipes(prev => prev.filter(r => r._id !== id))
+      setRecipes((prev: Recipe[]) => prev.filter((r: Recipe) => r._id !== id))
       setSelectedRecipe(null)
       toast.success('Recipe deleted successfully')
     } catch {
@@ -259,7 +291,7 @@ function AdminDashboard() {
   }
 
   // Save new credentials
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     localStorage.setItem('admin_email', adminEmail)
     localStorage.setItem('admin_password', adminPassword)
@@ -267,7 +299,7 @@ function AdminDashboard() {
   }
 
   // Add a flagged user email
-  const handleAddFlaggedEmail = async (e: React.FormEvent) => {
+  const handleAddFlaggedEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const emailToFlag = newFlaggedEmail.toLowerCase().trim()
     if (!emailToFlag) return
@@ -283,7 +315,7 @@ function AdminDashboard() {
 
   // Remove flagged email
   const handleRemoveFlaggedEmail = async (emailToRemove: string) => {
-    const updatedEmails = settings.flaggedEmails.filter(email => email !== emailToRemove)
+    const updatedEmails = settings.flaggedEmails.filter((email: string) => email !== emailToRemove)
     await updateSetting('flaggedEmails', updatedEmails)
   }
 
@@ -304,7 +336,7 @@ function AdminDashboard() {
   // Filtered and Sorted recipes
   const filteredRecipes = useMemo(() => {
     return recipes
-      .filter(recipe => {
+      .filter((recipe: Recipe) => {
         const matchesSearch = 
           recipe.title.toLowerCase().includes(recipeSearch.toLowerCase()) ||
           recipe.name.toLowerCase().includes(recipeSearch.toLowerCase()) ||
@@ -314,7 +346,7 @@ function AdminDashboard() {
 
         return matchesSearch && matchesStatus
       })
-      .sort((a, b) => {
+      .sort((a: Recipe, b: Recipe) => {
         if (recipeSort === 'newest') {
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         }
@@ -340,7 +372,7 @@ function AdminDashboard() {
       lastActive: string
     }>()
 
-    recipes.forEach(recipe => {
+    recipes.forEach((recipe: Recipe) => {
       const emailKey = recipe.email.toLowerCase().trim()
       const current = usersMap.get(emailKey) || {
         name: recipe.name,
@@ -364,7 +396,7 @@ function AdminDashboard() {
       usersMap.set(emailKey, current)
     })
 
-    return Array.from(usersMap.values()).filter(user => {
+    return Array.from(usersMap.values()).filter((user: { name: string; email: string }) => {
       return (
         user.name.toLowerCase().includes(userSearch.toLowerCase()) ||
         user.email.toLowerCase().includes(userSearch.toLowerCase())
@@ -374,10 +406,10 @@ function AdminDashboard() {
 
   // Overview calculations
   const totalCount = recipes.length
-  const pendingCount = recipes.filter(r => r.status === 'Pending').length
-  const activeCount = recipes.filter(r => r.status === 'Active').length
-  const rejectedCount = recipes.filter(r => r.status === 'Rejected').length
-  const uniqueUsersCount = useMemo(() => new Set(recipes.map(r => r.email.toLowerCase().trim())).size, [recipes])
+  const pendingCount = recipes.filter((r: Recipe) => r.status === 'Pending').length
+  const activeCount = recipes.filter((r: Recipe) => r.status === 'Active').length
+  const rejectedCount = recipes.filter((r: Recipe) => r.status === 'Rejected').length
+  const uniqueUsersCount = useMemo(() => new Set(recipes.map((r: Recipe) => r.email.toLowerCase().trim())).size, [recipes])
 
   // Submissions chart data (last 7 days grouped)
   const submissionsChartData = useMemo(() => {
@@ -391,7 +423,7 @@ function AdminDashboard() {
       groups[dateStr] = 0
     }
 
-    recipes.forEach(r => {
+    recipes.forEach((r: Recipe) => {
       const dateStr = new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
       if (groups[dateStr] !== undefined) {
         groups[dateStr] += 1
@@ -431,7 +463,7 @@ function AdminDashboard() {
         </div>
 
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-          {navItems.map(item => (
+          {navItems.map((item: { id: string; label: string; icon: React.ReactNode; badge?: number }) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as any)}
@@ -493,17 +525,31 @@ function AdminDashboard() {
             )}
           </header>
 
-          {/* Error Banner */}
-          {error && (
-            <div className="bg-destructive/10 border border-destructive/30 text-destructive text-sm p-4 rounded-2xl flex items-start gap-3 shadow-sm">
-              <XCircle size={18} className="mt-0.5 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
-
           {/* TAB 1: OVERVIEW */}
           {activeTab === 'overview' && (
             <div className="space-y-8">
+              {/* Seed Callout Banner */}
+              {recipes.length === 0 && (
+                <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-rise">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="text-amber-500 shrink-0 animate-bounce" size={24} />
+                    <div>
+                      <h4 className="font-bold text-foreground">Database is currently empty</h4>
+                      <p className="text-sm text-muted-foreground mt-0.5">
+                        There are no recipes in the MongoDB. Click "Seed Demo Data" to populate it with 5 realistic mock submissions automatically!
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleSeedData}
+                    disabled={seeding}
+                    className="px-5 py-2.5 bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider rounded-xl hover:scale-103 transition-transform shadow-juice disabled:opacity-75 shrink-0"
+                  >
+                    {seeding ? 'Seeding Database...' : 'Seed Demo Data'}
+                  </button>
+                </div>
+              )}
+
               {/* Stats Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <StatCard title="Total Submissions" value={totalCount.toString()} trend="All time uploaded" icon={<Package size={22} />} />
@@ -556,7 +602,7 @@ function AdminDashboard() {
                               paddingAngle={5}
                               dataKey="value"
                             >
-                              {statusChartData.map((entry, index) => (
+                              {statusChartData.map((entry: { color: string }, index: number) => (
                                 <Cell key={`cell-${index}`} fill={entry.color} />
                               ))}
                             </Pie>
@@ -609,7 +655,7 @@ function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
-                      {recipes.filter(r => r.status === 'Pending').slice(0, 5).length === 0 ? (
+                      {recipes.filter((r: Recipe) => r.status === 'Pending').slice(0, 5).length === 0 ? (
                         <tr>
                           <td colSpan={4} className="p-12 text-center text-muted-foreground">
                             <div className="flex flex-col items-center justify-center gap-3">
@@ -620,7 +666,7 @@ function AdminDashboard() {
                           </td>
                         </tr>
                       ) : (
-                        recipes.filter(r => r.status === 'Pending').slice(0, 5).map((recipe) => (
+                        recipes.filter((r: Recipe) => r.status === 'Pending').slice(0, 5).map((recipe: Recipe) => (
                           <tr key={recipe._id} className="hover:bg-muted/20 transition-colors">
                             <td className="p-4">
                               <button 
@@ -686,7 +732,7 @@ function AdminDashboard() {
                     type="text"
                     placeholder="Search by title, name, email..."
                     value={recipeSearch}
-                    onChange={(e) => setRecipeSearch(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRecipeSearch(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring text-sm transition-all"
                   />
                   {recipeSearch && (
@@ -722,7 +768,7 @@ function AdminDashboard() {
                     <Sliders size={15} />
                     <select
                       value={recipeSort}
-                      onChange={(e: any) => setRecipeSort(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setRecipeSort(e.target.value as any)}
                       className="bg-transparent border-none outline-none text-foreground font-medium cursor-pointer"
                     >
                       <option value="newest">Newest First</option>
@@ -760,7 +806,7 @@ function AdminDashboard() {
                     )}
                   </div>
                 ) : (
-                  filteredRecipes.map(recipe => (
+                  filteredRecipes.map((recipe: Recipe) => (
                     <div
                       key={recipe._id}
                       onClick={() => handleOpenDetails(recipe)}
@@ -808,7 +854,7 @@ function AdminDashboard() {
                     type="text"
                     placeholder="Search mixers by name or email..."
                     value={userSearch}
-                    onChange={(e) => setUserSearch(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserSearch(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring text-sm transition-all"
                   />
                 </div>
@@ -853,7 +899,7 @@ function AdminDashboard() {
                           </td>
                         </tr>
                       ) : (
-                        usersList.map((user) => {
+                        usersList.map((user: any) => {
                           const isFlagged = settings.flaggedEmails.includes(user.email.toLowerCase().trim())
                           return (
                             <tr key={user.email} className={`hover:bg-muted/20 transition-colors ${isFlagged ? 'bg-red-500/5 hover:bg-red-500/10' : ''}`}>
@@ -962,7 +1008,7 @@ function AdminDashboard() {
                       type="email"
                       required
                       value={adminEmail}
-                      onChange={(e) => setAdminEmail(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAdminEmail(e.target.value)}
                       className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ring text-sm transition-all"
                     />
                   </div>
@@ -976,7 +1022,7 @@ function AdminDashboard() {
                       type="password"
                       required
                       value={adminPassword}
-                      onChange={(e) => setAdminPassword(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAdminPassword(e.target.value)}
                       className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ring text-sm transition-all"
                     />
                   </div>
@@ -1047,7 +1093,7 @@ function AdminDashboard() {
                         <input
                           type="number"
                           value={settings.maxVideoSize}
-                          onChange={(e) => setSettings(prev => ({ ...prev, maxVideoSize: parseInt(e.target.value) || 50 }))}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSettings((prev: GlobalSettings) => ({ ...prev, maxVideoSize: parseInt(e.target.value) || 50 }))}
                           className="w-24 bg-background/50 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                         />
                         <button
@@ -1075,7 +1121,7 @@ function AdminDashboard() {
                     required
                     placeholder="Enter email address to block..."
                     value={newFlaggedEmail}
-                    onChange={(e) => setNewFlaggedEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewFlaggedEmail(e.target.value)}
                     className="flex-1 bg-background/50 border border-border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ring text-sm transition-all"
                   />
                   <button
@@ -1092,7 +1138,7 @@ function AdminDashboard() {
                     <p className="text-sm text-muted-foreground italic">No emails flagged. Submissions are open to all accounts.</p>
                   ) : (
                     <div className="flex flex-wrap gap-2">
-                      {settings.flaggedEmails.map(email => (
+                      {settings.flaggedEmails.map((email: string) => (
                         <div key={email} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400 border border-red-200 text-xs font-medium">
                           <span>{email}</span>
                           <button
@@ -1120,7 +1166,7 @@ function AdminDashboard() {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
           <div 
             className="glass-panel w-full max-w-4xl rounded-[2.5rem] border border-border shadow-lift overflow-hidden bg-card/95 max-h-[90vh] flex flex-col animate-rise"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/30">
@@ -1155,7 +1201,7 @@ function AdminDashboard() {
                         type="text"
                         required
                         value={editForm.title}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm((prev: any) => ({ ...prev, title: e.target.value }))}
                         className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ring text-sm transition-all"
                       />
                     </div>
@@ -1164,7 +1210,7 @@ function AdminDashboard() {
                       <label className="text-sm font-semibold text-foreground">Audit Status</label>
                       <select
                         value={editForm.status}
-                        onChange={(e: any) => setEditForm(prev => ({ ...prev, status: e.target.value }))}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEditForm((prev: any) => ({ ...prev, status: e.target.value as any }))}
                         className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ring text-sm transition-all text-foreground cursor-pointer font-semibold"
                       >
                         <option value="Pending">Pending</option>
@@ -1179,7 +1225,7 @@ function AdminDashboard() {
                         type="text"
                         required
                         value={editForm.name}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm((prev: any) => ({ ...prev, name: e.target.value }))}
                         className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ring text-sm transition-all"
                       />
                     </div>
@@ -1190,7 +1236,7 @@ function AdminDashboard() {
                         type="email"
                         required
                         value={editForm.email}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm((prev: any) => ({ ...prev, email: e.target.value }))}
                         className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ring text-sm transition-all"
                       />
                     </div>
@@ -1202,7 +1248,7 @@ function AdminDashboard() {
                       rows={5}
                       required
                       value={editForm.description}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditForm((prev: any) => ({ ...prev, description: e.target.value }))}
                       className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ring text-sm transition-all resize-none"
                     />
                   </div>
@@ -1231,38 +1277,19 @@ function AdminDashboard() {
                     <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest block">Recipe Video Attachment</span>
                     <div className="relative aspect-[9/16] bg-neutral-900 rounded-[2rem] overflow-hidden group shadow-lift border border-neutral-800 flex flex-col justify-center items-center">
                       
-                      {isVideoPlaying ? (
-                        <>
-                          {/* Playing State Mock Animation */}
-                          <div className="absolute inset-0 flex flex-col justify-between p-6 z-10 text-white bg-gradient-to-b from-black/40 via-transparent to-black/60 pointer-events-none">
-                            <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold self-start flex items-center gap-1 uppercase">
-                              <span className="w-2 h-2 rounded-full bg-red-500 animate-ping inline-block" /> Live Preview
-                            </span>
-                            
-                            {/* Animated Audio Equalizer Visualizer simulation */}
-                            <div className="flex justify-center items-end gap-1 h-12 w-full mt-auto">
-                              {Array.from({ length: 15 }).map((_, i) => (
-                                <span 
-                                  key={i} 
-                                  className="w-1 bg-orange-500 rounded-full animate-bounce"
-                                  style={{ 
-                                    height: `${Math.floor(Math.random() * 80) + 20}%`,
-                                    animationDuration: `${Math.floor(Math.random() * 800) + 400}ms`
-                                  }} 
-                                />
-                              ))}
-                            </div>
-                          </div>
+                      {/* Actual video element */}
+                      <video
+                        ref={videoRef}
+                        src={selectedRecipe.videoName && selectedRecipe.videoName.startsWith('http') ? selectedRecipe.videoName : "https://assets.mixkit.co/videos/preview/mixkit-pouring-orange-juice-in-a-glass-41584-large.mp4"}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        playsInline
+                        loop
+                        muted
+                      />
 
-                          <div className="text-center p-6 text-white space-y-3 z-10">
-                            <Video size={48} className="mx-auto text-primary animate-pulse" />
-                            <h5 className="font-bold text-sm">{selectedRecipe.videoName || 'Attached_Video.mp4'}</h5>
-                            <p className="text-xs text-neutral-400">Audio/video stream simulation running...</p>
-                          </div>
-                        </>
-                      ) : (
-                        /* Paused State */
-                        <div className="absolute inset-0 bg-neutral-950/90 flex flex-col justify-center items-center p-6 text-center z-10">
+                      {/* Dark overlay for paused state */}
+                      {!isVideoPlaying && (
+                        <div className="absolute inset-0 bg-black/50 z-10 flex flex-col justify-center items-center p-6 text-center">
                           <button
                             onClick={() => setIsVideoPlaying(true)}
                             className="w-20 h-20 rounded-full bg-primary text-primary-foreground shadow-juice flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
@@ -1272,7 +1299,30 @@ function AdminDashboard() {
                           <h5 className="font-bold text-sm text-neutral-200 mt-5 truncate max-w-[200px]">
                             {selectedRecipe.videoName || 'Attached_Video.mp4'}
                           </h5>
-                          <span className="text-xs text-neutral-400 mt-1">Click to play upload attachment</span>
+                          <span className="text-xs text-neutral-300 mt-1">Click to play upload attachment</span>
+                        </div>
+                      )}
+
+                      {/* Playing overlays */}
+                      {isVideoPlaying && (
+                        <div className="absolute inset-0 flex flex-col justify-between p-6 z-10 text-white bg-gradient-to-b from-black/40 via-transparent to-black/60 pointer-events-none">
+                          <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold self-start flex items-center gap-1 uppercase">
+                            <span className="w-2 h-2 rounded-full bg-red-500 animate-ping inline-block" /> Live Preview
+                          </span>
+                          
+                          {/* Animated Audio Equalizer Visualizer simulation */}
+                          <div className="flex justify-center items-end gap-1 h-12 w-full mt-auto">
+                            {Array.from({ length: 15 }).map((_, i) => (
+                              <span 
+                                key={i} 
+                                className="w-1 bg-orange-500 rounded-full animate-bounce"
+                                style={{ 
+                                  height: `${Math.floor(Math.random() * 80) + 20}%`,
+                                  animationDuration: `${Math.floor(Math.random() * 800) + 400}ms`
+                                }} 
+                              />
+                            ))}
+                          </div>
                         </div>
                       )}
 
@@ -1343,16 +1393,16 @@ function AdminDashboard() {
                           <AlertTriangle size={18} className="shrink-0" />
                           <span className="text-xs font-semibold">This submission requires review before appearing on the public page.</span>
                         </div>
-                        <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
                           <button
                             onClick={() => handleUpdateStatus(selectedRecipe, 'Active')}
-                            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:scale-103 transition-transform flex items-center gap-1 shadow-sm"
+                            className="flex-1 sm:flex-initial justify-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:scale-103 transition-transform flex items-center gap-1 shadow-sm"
                           >
                             <Check size={14} /> Approve
                           </button>
                           <button
                             onClick={() => handleUpdateStatus(selectedRecipe, 'Rejected')}
-                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:scale-103 transition-transform flex items-center gap-1 shadow-sm"
+                            className="flex-1 sm:flex-initial justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:scale-103 transition-transform flex items-center gap-1 shadow-sm"
                           >
                             <X size={14} /> Reject
                           </button>
@@ -1361,12 +1411,12 @@ function AdminDashboard() {
                     )}
 
                     {/* Admin management buttons */}
-                    <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-border mt-auto">
-                      <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-border mt-auto">
+                      <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                         {selectedRecipe.status !== 'Active' && (
                           <button
                             onClick={() => handleUpdateStatus(selectedRecipe, 'Active')}
-                            className="px-4 py-2.5 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wide rounded-xl transition-all"
+                            className="flex-1 sm:flex-initial text-center justify-center px-4 py-2.5 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wide rounded-xl transition-all"
                           >
                             Set Approved
                           </button>
@@ -1374,23 +1424,23 @@ function AdminDashboard() {
                         {selectedRecipe.status !== 'Rejected' && (
                           <button
                             onClick={() => handleUpdateStatus(selectedRecipe, 'Rejected')}
-                            className="px-4 py-2.5 bg-red-100 hover:bg-red-200 dark:bg-red-950/30 dark:hover:bg-red-900/40 text-red-700 dark:text-red-400 font-bold text-xs uppercase tracking-wide rounded-xl transition-all"
+                            className="flex-1 sm:flex-initial text-center justify-center px-4 py-2.5 bg-red-100 hover:bg-red-200 dark:bg-red-950/30 dark:hover:bg-red-900/40 text-red-700 dark:text-red-400 font-bold text-xs uppercase tracking-wide rounded-xl transition-all"
                           >
                             Set Rejected
                           </button>
                         )}
                       </div>
                       
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 w-full sm:w-auto">
                         <button
                           onClick={() => setIsEditingRecipe(true)}
-                          className="px-4 py-2.5 border border-border hover:bg-muted font-bold text-xs uppercase tracking-wide rounded-xl flex items-center gap-1 transition-all text-foreground"
+                          className="flex-1 sm:flex-initial justify-center px-4 py-2.5 border border-border hover:bg-muted font-bold text-xs uppercase tracking-wide rounded-xl flex items-center gap-1.5 transition-all text-foreground"
                         >
                           <Edit3 size={14} /> Edit Info
                         </button>
                         <button
                           onClick={() => handleDeleteRecipe(selectedRecipe._id)}
-                          className="px-4 py-2.5 bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold text-xs uppercase tracking-wide rounded-xl flex items-center gap-1 transition-all"
+                          className="flex-1 sm:flex-initial justify-center px-4 py-2.5 bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold text-xs uppercase tracking-wide rounded-xl flex items-center gap-1.5 transition-all"
                         >
                           <Trash2 size={14} /> Delete
                         </button>
@@ -1414,7 +1464,7 @@ function StatusBadge({ status }: { status: string }) {
     Rejected: 'bg-red-100 text-red-800 dark:bg-red-950/40 dark:text-red-400 border border-red-200',
   }
   return (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${styles[status] ?? styles.Pending}`}>
+    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${styles[status] ?? styles['Pending']}`}>
       {status === 'Active' ? 'Approved' : status}
     </span>
   )

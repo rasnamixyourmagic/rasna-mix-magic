@@ -26,6 +26,64 @@ export const APIRoute = createAPIFileRoute('/api/recipes')({
       const { Recipe, Setting } = await import('../../lib/models')
       await connectToDatabase()
 
+      // Support database seeding for demo testing
+      if (body.action === 'seed') {
+        const mockRecipes = [
+          {
+            name: "Rahul Sharma",
+            email: "rahul@example.com",
+            title: "Tangerine Sunset Twist",
+            description: "2 parts Orange Rasna Mix, 1 part fresh pineapple juice, a splash of lime, topped with carbonated club soda and mint. Shake over ice.",
+            videoName: "orange_twist.mp4",
+            status: "Pending",
+            createdAt: new Date(Date.now() - 3 * 3600 * 1000).toISOString()
+          },
+          {
+            name: "Ananya Iyer",
+            email: "ananya@example.com",
+            title: "Minty Mango Sparkler",
+            description: "Mango Rasna Mix blended with fresh mint leaves, coconut water, crushed ice, and raw organic honey. Refreshing summer mix!",
+            videoName: "mango_sparkle.mov",
+            status: "Active",
+            createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString()
+          },
+          {
+            name: "Kabir Mehta",
+            email: "kabir@example.com",
+            title: "Spicy Cola Delight",
+            description: "Cola Rasna Mix infused with a pinch of black salt (kala namak), cumin powder, and fresh lime juice. Served chilled.",
+            videoName: "spicy_cola.mp4",
+            status: "Active",
+            createdAt: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString()
+          },
+          {
+            name: "Pooja Patel",
+            email: "pooja@example.com",
+            title: "Berry Blast Cooler",
+            description: "A combination of Shahi Gulab Rasna Mix and raspberry pulp, served over shaved ice with fresh blueberries.",
+            videoName: "berry_rose.avi",
+            status: "Rejected",
+            createdAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString()
+          },
+          {
+            name: "Vikram Sen",
+            email: "vikram@example.com",
+            title: "Pineapple Mint Cooler",
+            description: "Pineapple Rasna Mix, fresh cucumber juice, fresh mint leaves, coconut water, ginger juice, and black pepper. Perfect detox drink.",
+            videoName: "pineapple_cucumber.mp4",
+            status: "Pending",
+            createdAt: new Date(Date.now() - 4 * 24 * 3600 * 1000).toISOString()
+          }
+        ]
+        
+        await Recipe.deleteMany({}) // clear out any garbage empty recipes
+        const inserted = await Recipe.insertMany(mockRecipes)
+        return new Response(JSON.stringify(inserted), {
+          status: 201,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+
       let initialStatus = 'Pending'
       try {
         // Check for flagged email
