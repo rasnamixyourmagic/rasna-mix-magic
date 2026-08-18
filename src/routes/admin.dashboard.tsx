@@ -1275,12 +1275,12 @@ function AdminDashboard() {
                   {/* Left side: Premium media player mock */}
                   <div className="md:col-span-5 space-y-4">
                     <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest block">Recipe Video Attachment</span>
-                    <div className="relative aspect-[9/16] bg-neutral-900 rounded-[2rem] overflow-hidden group shadow-lift border border-neutral-800 flex flex-col justify-center items-center">
+                    <div className="relative w-full aspect-[9/16] max-h-[350px] md:max-h-none bg-neutral-900 rounded-[2rem] overflow-hidden group shadow-lift border border-neutral-800 flex flex-col justify-center items-center">
                       
                       {/* Actual video element */}
                       <video
                         ref={videoRef}
-                        src={selectedRecipe.videoName && selectedRecipe.videoName.startsWith('http') ? selectedRecipe.videoName : "https://assets.mixkit.co/videos/preview/mixkit-pouring-orange-juice-in-a-glass-41584-large.mp4"}
+                        src={selectedRecipe.videoName && selectedRecipe.videoName.startsWith('http') ? selectedRecipe.videoName : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"}
                         className="absolute inset-0 w-full h-full object-cover"
                         playsInline
                         loop
@@ -1345,102 +1345,104 @@ function AdminDashboard() {
                   </div>
 
                   {/* Right side: Detailed Information */}
-                  <div className="md:col-span-7 space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <span className="text-xs text-muted-foreground uppercase font-bold">Uploader Mixer</span>
-                        <div className="font-bold text-foreground flex items-center gap-1.5">
-                          <User size={14} className="text-primary" />
-                          {selectedRecipe.name}
+                  <div className="md:col-span-7 space-y-6 flex flex-col h-full justify-between">
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <span className="text-xs text-muted-foreground uppercase font-bold">Uploader Mixer</span>
+                          <div className="font-bold text-foreground flex items-center gap-1.5">
+                            <User size={14} className="text-primary" />
+                            {selectedRecipe.name}
+                          </div>
+                        </div>
+
+                        <div className="space-y-1">
+                          <span className="text-xs text-muted-foreground uppercase font-bold">Current Audit Status</span>
+                          <div>
+                            <StatusBadge status={selectedRecipe.status} />
+                          </div>
+                        </div>
+
+                        <div className="space-y-1">
+                          <span className="text-xs text-muted-foreground uppercase font-bold">Email Address</span>
+                          <div className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                            <Mail size={14} className="text-primary" />
+                            {selectedRecipe.email}
+                          </div>
+                        </div>
+
+                        <div className="space-y-1">
+                          <span className="text-xs text-muted-foreground uppercase font-bold">Date Received</span>
+                          <div className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                            <Calendar size={14} className="text-primary" />
+                            {new Date(selectedRecipe.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                          </div>
                         </div>
                       </div>
 
-                      <div className="space-y-1">
-                        <span className="text-xs text-muted-foreground uppercase font-bold">Current Audit Status</span>
-                        <div>
-                          <StatusBadge status={selectedRecipe.status} />
+                      <div className="space-y-2">
+                        <span className="text-xs text-muted-foreground uppercase font-bold block">Ingredients & Preparation Instructions</span>
+                        <div className="p-4 bg-muted/50 rounded-2xl text-sm border border-border leading-relaxed text-foreground whitespace-pre-wrap">
+                          {selectedRecipe.description}
                         </div>
                       </div>
 
-                      <div className="space-y-1">
-                        <span className="text-xs text-muted-foreground uppercase font-bold">Email Address</span>
-                        <div className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                          <Mail size={14} className="text-primary" />
-                          {selectedRecipe.email}
+                      {/* Quick review action panel */}
+                      {selectedRecipe.status === 'Pending' && (
+                        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+                          <div className="flex items-center gap-2 text-amber-800 dark:text-amber-400">
+                            <AlertTriangle size={18} className="shrink-0" />
+                            <span className="text-xs font-semibold">This submission requires review before appearing on the public page.</span>
+                          </div>
+                          <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                            <button
+                              onClick={() => handleUpdateStatus(selectedRecipe, 'Active')}
+                              className="flex-1 sm:flex-initial justify-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:scale-103 transition-transform flex items-center gap-1 shadow-sm"
+                            >
+                              <Check size={14} /> Approve
+                            </button>
+                            <button
+                              onClick={() => handleUpdateStatus(selectedRecipe, 'Rejected')}
+                              className="flex-1 sm:flex-initial justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:scale-103 transition-transform flex items-center gap-1 shadow-sm"
+                            >
+                              <X size={14} /> Reject
+                            </button>
+                          </div>
                         </div>
-                      </div>
-
-                      <div className="space-y-1">
-                        <span className="text-xs text-muted-foreground uppercase font-bold">Date Received</span>
-                        <div className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                          <Calendar size={14} className="text-primary" />
-                          {new Date(selectedRecipe.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
-                        </div>
-                      </div>
+                      )}
                     </div>
-
-                    <div className="space-y-2">
-                      <span className="text-xs text-muted-foreground uppercase font-bold block">Ingredients & Preparation Instructions</span>
-                      <div className="p-4 bg-muted/50 rounded-2xl text-sm border border-border leading-relaxed text-foreground whitespace-pre-wrap">
-                        {selectedRecipe.description}
-                      </div>
-                    </div>
-
-                    {/* Quick review action panel */}
-                    {selectedRecipe.status === 'Pending' && (
-                      <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-2 text-amber-800 dark:text-amber-400">
-                          <AlertTriangle size={18} className="shrink-0" />
-                          <span className="text-xs font-semibold">This submission requires review before appearing on the public page.</span>
-                        </div>
-                        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-                          <button
-                            onClick={() => handleUpdateStatus(selectedRecipe, 'Active')}
-                            className="flex-1 sm:flex-initial justify-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:scale-103 transition-transform flex items-center gap-1 shadow-sm"
-                          >
-                            <Check size={14} /> Approve
-                          </button>
-                          <button
-                            onClick={() => handleUpdateStatus(selectedRecipe, 'Rejected')}
-                            className="flex-1 sm:flex-initial justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:scale-103 transition-transform flex items-center gap-1 shadow-sm"
-                          >
-                            <X size={14} /> Reject
-                          </button>
-                        </div>
-                      </div>
-                    )}
 
                     {/* Admin management buttons */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-border mt-auto">
-                      <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                        {selectedRecipe.status !== 'Active' && (
+                    <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 pt-6 border-t border-border mt-6">
+                      <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                        {selectedRecipe.status !== 'Active' && selectedRecipe.status !== 'Pending' && (
                           <button
                             onClick={() => handleUpdateStatus(selectedRecipe, 'Active')}
-                            className="flex-1 sm:flex-initial text-center justify-center px-4 py-2.5 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wide rounded-xl transition-all"
+                            className="w-full sm:w-auto justify-center px-4 py-2.5 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wide rounded-xl transition-all flex items-center gap-1.5"
                           >
-                            Set Approved
+                            <Check size={14} /> Set Approved
                           </button>
                         )}
-                        {selectedRecipe.status !== 'Rejected' && (
+                        {selectedRecipe.status !== 'Rejected' && selectedRecipe.status !== 'Pending' && (
                           <button
                             onClick={() => handleUpdateStatus(selectedRecipe, 'Rejected')}
-                            className="flex-1 sm:flex-initial text-center justify-center px-4 py-2.5 bg-red-100 hover:bg-red-200 dark:bg-red-950/30 dark:hover:bg-red-900/40 text-red-700 dark:text-red-400 font-bold text-xs uppercase tracking-wide rounded-xl transition-all"
+                            className="w-full sm:w-auto justify-center px-4 py-2.5 bg-red-100 hover:bg-red-200 dark:bg-red-950/30 dark:hover:bg-red-900/40 text-red-700 dark:text-red-400 font-bold text-xs uppercase tracking-wide rounded-xl transition-all flex items-center gap-1.5"
                           >
-                            Set Rejected
+                            <X size={14} /> Set Rejected
                           </button>
                         )}
                       </div>
                       
-                      <div className="flex gap-2 w-full sm:w-auto">
+                      <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                         <button
                           onClick={() => setIsEditingRecipe(true)}
-                          className="flex-1 sm:flex-initial justify-center px-4 py-2.5 border border-border hover:bg-muted font-bold text-xs uppercase tracking-wide rounded-xl flex items-center gap-1.5 transition-all text-foreground"
+                          className="w-full sm:w-auto justify-center px-4 py-2.5 border border-border hover:bg-muted font-bold text-xs uppercase tracking-wide rounded-xl flex items-center gap-1.5 transition-all text-foreground"
                         >
                           <Edit3 size={14} /> Edit Info
                         </button>
                         <button
                           onClick={() => handleDeleteRecipe(selectedRecipe._id)}
-                          className="flex-1 sm:flex-initial justify-center px-4 py-2.5 bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold text-xs uppercase tracking-wide rounded-xl flex items-center gap-1.5 transition-all"
+                          className="w-full sm:w-auto justify-center px-4 py-2.5 bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold text-xs uppercase tracking-wide rounded-xl flex items-center gap-1.5 transition-all"
                         >
                           <Trash2 size={14} /> Delete
                         </button>
