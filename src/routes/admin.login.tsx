@@ -25,7 +25,10 @@ function AdminLogin() {
     // Simulate a short delay for UX
     await new Promise((r) => setTimeout(r, 600))
 
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    const savedEmail = localStorage.getItem('admin_email') || ADMIN_EMAIL
+    const savedPassword = localStorage.getItem('admin_password') || ADMIN_PASSWORD
+
+    if (email === savedEmail && password === savedPassword) {
       localStorage.setItem('admin_auth', 'true')
       navigate({ to: '/admin/dashboard' })
     } else {
