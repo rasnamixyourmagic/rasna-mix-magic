@@ -67,14 +67,14 @@ function BuyPage() {
                   className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${p.accent} opacity-70 transition-opacity group-hover:opacity-100`}
                 />
                 <div className="relative flex h-full flex-col">
-                  <div className="overflow-hidden rounded-[1.5rem] bg-background/50">
+                  <div className="overflow-hidden rounded-[1.5rem] bg-background/50 aspect-square">
                     <img
                       src={p.image}
                       alt={`Rasna ${p.name}`}
                       loading="lazy"
                       width={768}
                       height={768}
-                      className="mx-auto max-h-56 w-full object-contain transition-transform duration-700 group-hover:scale-110"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                   </div>
                   <h2 className="mt-5 font-display text-2xl">{p.name}</h2>
