@@ -1,8 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShoppingBag, Store, Truck } from "lucide-react";
-import mixlab from "@/assets/mixlab.jpg";
-import watermelon from "@/assets/watermelon.jpg";
-import mango from "@/assets/mango.jpg";
+import mixlabBox from "@/assets/mixlab-box.jpg";
 
 const title = "Buy Rasna — Packs, Bottles & Where to Find Us";
 const description =
@@ -24,24 +22,10 @@ export const Route = createFileRoute("/buy")({
 
 const packs = [
   {
-    name: "Single Bottle",
-    price: "₹45",
-    blurb: "One flavour, one perfect glass. Pick any Summer or Winter flavour.",
-    image: watermelon,
-    accent: "from-melon/25 to-lemon/20",
-  },
-  {
-    name: "Family Pack",
-    price: "₹199",
-    blurb: "Four bottles, four moods. The everyday fridge favourite.",
-    image: mango,
-    accent: "from-mango/30 to-orange-fruit/20",
-  },
-  {
     name: "MixLab Party Kit",
-    price: "₹499",
+    price: "₹60",
     blurb: "Every flavour plus a mixing guide — built for making your own recipes.",
-    image: mixlab,
+    image: mixlabBox,
     accent: "from-lemon/30 to-leaf/20",
   },
 ];

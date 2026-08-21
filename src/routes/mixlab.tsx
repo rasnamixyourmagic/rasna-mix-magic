@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Flavours } from "@/components/site/Flavours";
-import mixlab from "@/assets/mixlab.jpg";
+import mixlabBox from "@/assets/mixlab-box.jpg";
 
 const title = "MixLab — Create Your Own Rasna Drink";
 const description =
@@ -67,8 +67,8 @@ function MixLabPage() {
             <div className="bg-tropic absolute inset-6 rounded-[3rem] opacity-30 blur-2xl" />
             <div className="glass-panel shadow-lift relative overflow-hidden rounded-[2.5rem] p-4 sm:p-6">
               <img
-                src={mixlab}
-                alt="Rasna MixLab Original layered fruit drink"
+                src={mixlabBox}
+                alt="Rasna MixLab Box"
                 loading="lazy"
                 width={1024}
                 height={1024}
